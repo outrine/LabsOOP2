@@ -1,0 +1,135 @@
+@startuml one
+    rectangle {
+
+    class Tutor extends Person {
+        name: String
+        ---
+        create(Grade,Course,task)
+        edit(Grade,Course,task)
+        ---
+        Преподаватель курса
+    }    
+
+    class Student extends Person{
+        name: String
+        Rating: Rating[]
+        ---
+        Студент курса
+    }
+
+    class Course {
+        name: String
+        tutor: Tutor[]
+        student: Student[]
+        task: Task[]
+        raiting: StudentRating[]
+        ---
+        addTask(task)
+        addPerson(person)
+        ---
+        Хранит данные о курсе,
+        включает в себя даннеые о студенте
+        и списке заданий в рамках одной дисциплины
+        }
+
+    class StudentRating {
+        sumOfTasks_N: integer
+        numTaskWeight: NumTaskWeight[]
+        grade: integer
+        MaxValue: integer
+        ---
+        FormulaRating(StudentRating)
+        ---
+        Формула расчета рейтинга
+    }
+    class NumTaskWeight{
+        currentTask_i: integer
+        weihgt: double
+    }
+    class Task{
+        name: String
+        currentTask_i: integer
+        type: Type
+        description: String
+        shortName: String
+        maxValue: integer
+        deadline: Data
+        ---
+        users: (Person)
+        admin: (tutor)
+        ---
+        Хранит данные о задаче
+    }
+    class Type{
+        name: String
+        shortName: String
+        ---
+        Хранит данные о типе задачи
+    }
+    class Grade{
+        name: String
+        value: integer
+        date: Data
+        student: Student
+        ---
+        Процесс обучения
+    }
+
+    class Person{
+        name: String
+        Course: course[]
+    }
+    Student "1" <-- StudentRating
+    StudentRating "1" <-- Task
+    Course "*" <-- "*" Tutor
+    Course "*" <-- "*" Student
+    Course "1" <-- "*" Task
+    Student "1" <-- "*" Grade
+    Task "*" <-- "1" Type
+    Task "1" <-- "*" Grade
+    NumTaskWeight "1" <-- "*" Task
+    StudentRating "1" <-- "*" NumTaskWeight
+    }
+
+@enduml
+
+@startuml two
+    actor Tutor 
+    Collections Courses 
+
+    Tutor -> Courses :get course
+    Tutor -> course : createGrade(Person,Course,task)
+    course -> grade : <<create>>
+    course -> task : setGrade 
+    Tutor -> course : getRating(task)
+    course -> task : getStudentRating
+    Courses -> course : studentRating
+@enduml
+
+@startuml three
+    left to right direction
+    Person <-- Tutor
+    Person <-- Student
+    Person <-- Admin 
+    rectangle {
+         usecase ("Set grade") as SG
+        usecase ("Read grades") as RG
+        usecase ("Read rating") as RR
+        usecase ("Set Course") as SC
+        usecase ("Set Course Person") as SCP
+        usecase ("Set Rating") as SR
+
+        Tutor -- ("Set task")
+        Tutor -- SG
+        Tutor - SCP
+        Tutor --- SR
+        Tutor --- RR
+        Student -- RG
+        Student -- RR
+        Admin -- ("Set Person")
+        Admin -- SC
+    }
+    SG --> RG : << extend >>
+    SC --> SCP : << include >>
+
+@enduml

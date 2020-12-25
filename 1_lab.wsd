@@ -1,0 +1,121 @@
+@startuml one
+    left to right direction
+    
+    rectangle {
+
+    class Tutor extends Person {
+        name: String
+        right: CreateCourse
+        ---
+        createCourse(course)
+        editCourse(course)
+        addTask(task)
+        editTask(task)
+        ---
+        Преподаватель курса
+    }    
+
+    class Student extends Person{
+        name: String
+        group: String
+        Perform: Course[]
+        Rating: Rating[]
+        ---
+        setTask(task)
+        Perform(task)
+        ---
+        Студент курса
+    }
+
+    class Course {
+        name: String
+        Tutor: Tutor[]
+        Student: Student[]
+        Task: Task[]
+        ---
+        addTask(task)
+        addPerson(person)
+        ---
+        Хранит данные о курсе, 
+        включает в себя даннеые о студенте 
+        и списке заданий в рамках одной дисциплины
+    }
+
+    class Task{
+        name: String
+        type: Type
+        description: String
+        shortName: String
+        MaxValue: integer
+        deadline: Data
+        grades: Grade[]
+        ---
+        users: (Person)
+        admin: (tutor)
+        ---
+        Хранит данные о задаче
+    }
+
+    class Rating{
+        NumbersTask: integer
+        TaskWeihgt:integer
+        EstimateTask: integer
+        MaxValue: integer
+        TotalRating: integer
+        ---
+        users: (Person)
+        ---
+        Вычисляет рейтинг
+    }
+
+    class Type{
+        name: String
+        shortName: String
+        ---
+        Task: (task)
+        ---
+        Хранит данные о типе задачи
+    }
+
+        class Grade{
+        name: String
+        value: integer
+        date: Data
+        student: Student
+        ---
+        Student: (student)
+        Task: (task)
+        ---
+        Процесс обучения
+    }
+
+    class Person{
+        name: String
+        Course: course[]
+    }
+    Student "1" <-- Rating
+    Course "*" <-- "*" Tutor
+    Course "*" <-- "*" Student
+    Course "1" <-- "*" Task
+    Student "1" <-- "*" Grade
+    Task "*" <-- "1" Type
+    Task "1" <-- "*" Grade
+    Rating "1" <-- "*" Course
+    }
+@enduml
+
+@startuml two
+    actor Tutor 
+    Collections Courses 
+
+    Tutor -> Courses : get course
+    Tutor -> course : setGrade(task, person, grade)
+    Tutor -> course : toEstimateTask
+    course -> grade : <<create>>
+    Tutor -> course : sumRatingResult
+    activate grade 
+    course -> task : setGrade 
+    deactivate grade 
+    course -> task : Result=\ntask.welght[i]*(task.appraisalStudent[i]/task.maxValue)
+    Courses -> course : setRating
+@enduml

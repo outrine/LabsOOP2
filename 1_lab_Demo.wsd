@@ -1,0 +1,51 @@
+@startuml one
+    left to right direction
+    
+    rectangle {
+
+    class Tutor {
+        name: String
+        right: CreateCourse
+        ---
+        addCourse(course)
+        editCourse(course)
+        addTasks(tasks)
+        editTasks(tasks)
+        ---
+        Обычный преподаватель
+    }    
+
+    class Student {
+        name: String
+        Perform: Course[]
+        ---
+        setTask(task)
+        Perform(task)
+        ---
+        Обычный студент
+    }
+
+    class Course {
+        name: String
+        Tutors: Tutor[]
+        Students: Student[]
+        Tasks: Tasks[]
+        ---
+        addTask(task)
+        addPerson(person)
+        ---
+        Хранит данные о курсе, включает в себя даннеые о студенте и списке заданий
+    }
+
+    class Tasks{
+        name: String
+        price: int
+        ---
+        users: (Students)
+        admin: (tutor)
+        ---
+        Хранит данные о задаче
+    }
+
+    }
+@enduml

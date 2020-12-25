@@ -1,0 +1,5 @@
+@startuml one
+    left to right direction
+    Person <|-- Tutor
+    Person <|-- Student
+@enduml
